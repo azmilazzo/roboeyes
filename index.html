@@ -83,20 +83,20 @@
     <h1>🎭 Emotion Animation Viewer</h1>
     
     <div class="controls">
-      <!-- Dropdown to select emotion -->
+      <!-- Dropdown with emojis -->
       <select id="emotionSelect">
         <option value="">Select Emotion</option>
-        <option value="angry">Angry</option>
-        <option value="blink">Blink</option>
-        <option value="blink2">Blink 2</option>
-        <option value="dizzy">Dizzy</option>
-        <option value="excited">Excited</option>
-        <option value="happy">Happy</option>
-        <option value="happy2">Happy 2</option>
-        <option value="happy3">Happy 3</option>
-        <option value="neutral">Neutral</option>
-        <option value="sad">Sad</option>
-        <option value="sleep">Sleep</option>
+        <option value="angry">😠 Angry</option>
+        <option value="blink">👀 Blink</option>
+        <option value="blink2">👀 Blink 2</option>
+        <option value="dizzy">🌀 Dizzy</option>
+        <option value="excited">🎉 Excited</option>
+        <option value="happy">😊 Happy</option>
+        <option value="happy2">😊 Happy 2</option>
+        <option value="happy3">😊 Happy 3</option>
+        <option value="neutral">😐 Neutral</option>
+        <option value="sad">😢 Sad</option>
+        <option value="sleep">💤 Sleep</option>
       </select>
       
       <!-- Dark mode toggle -->
@@ -115,47 +115,47 @@
     const animationImg = document.getElementById('animation');
     const status = document.getElementById('status');
 
-    // Define emotion frames using GitHub raw URLs
+    // Define emotion frames (NO LEADING ZEROS OR UNDERSCORES)
     const emotionFrames = {
       angry: Array.from({length: 20}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/angry/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/angry/frame${i}.png`
       ),
       blink: Array.from({length: 39}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/blink/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/blink/frame${i}.png`
       ),
       blink2: Array.from({length: 20}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/blink2/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/blink2/frame${i}.png`
       ),
       dizzy: Array.from({length: 67}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/dizzy/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/dizzy/frame${i}.png`
       ),
       excited: Array.from({length: 24}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/excited/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/excited/frame${i}.png`
       ),
       happy: Array.from({length: 45}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/happy/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/happy/frame${i}.png`
       ),
       happy2: Array.from({length: 20}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/happy2/frame_ ${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/happy2/frame${i}.png`
       ),
       happy3: Array.from({length: 26}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/happy3/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/happy3/frame${i}.png`
       ),
       neutral: Array.from({length: 61}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/neutral/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/neutral/frame${i}.png`
       ),
       sad: Array.from({length: 47}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/sad/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/sad/frame${i}.png`
       ),
       sleep: Array.from({length: 112}, (_, i) => 
-        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/sleep/frame${String(i+1).padStart(2, '0')}.png`
+        `https://raw.githubusercontent.com/azmilazzo/roboeyes/main/images/sleep/frame${i}.png`
       )
     };
 
     let currentFrames = [];
     let currentFrameIndex = 0;
     let animationInterval = null;
-    const frameDelay = 100; // ms per frame
+    const frameDelay = 100; // Adjust speed here (ms per frame)
 
     // Load selected emotion
     emotionSelect.addEventListener('change', (e) => {
@@ -178,7 +178,7 @@
 
     // Start animation
     function startAnimation() {
-      if (animationInterval) clearInterval(animationInterval);
+      clearInterval(animationInterval);
       animationInterval = setInterval(() => {
         currentFrameIndex = (currentFrameIndex + 1) % currentFrames.length;
         animationImg.src = currentFrames[currentFrameIndex];
