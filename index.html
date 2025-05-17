@@ -23,6 +23,7 @@
       border-radius: 1rem;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
+      margin: auto;
     }
 
     .card-header {
@@ -74,7 +75,7 @@
       width: 6rem;
       height: 6rem;
       background: #3b82f6;
-      border-radius: 0.5rem; /* Square eyes */
+      border-radius: 0.5rem;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -85,7 +86,7 @@
     /* Happy expression */
     .eye.happy {
       background: #facc15;
-      border-radius: 2rem 2rem 0 0; /* Curved top */
+      border-radius: 2rem 2rem 0 0;
       animation: vibrate 0.3s ease-in-out infinite;
     }
 
@@ -204,9 +205,8 @@
       const leftEye = document.getElementById('left-eye');
       const rightEye = document.getElementById('right-eye');
       const idleMode = document.getElementById('idle-mode');
-      const eyeBox = document.getElementById('eye-box');
 
-      if (!leftEye || !rightEye || !idleMode || !eyeBox) {
+      if (!leftEye || !rightEye || !idleMode) {
         console.error('Required DOM elements not found!');
         return;
       }
@@ -219,14 +219,12 @@
       }
 
       function setEyePosition(direction) {
-        if (isIdleMode && direction !== 'center') return;
-
+        // Removed the condition blocking non-center directions during idle mode
         const transform = LOOK_DIRECTIONS[direction] || 'translate(0, 0)';
         const fullTransform = `translate(-50%, -50%) ${transform}`;
         leftEye.style.transform = fullTransform;
         rightEye.style.transform = fullTransform;
 
-        // Update active button state
         document.querySelectorAll('[data-dir]').forEach(btn => {
           btn.classList.toggle('active', btn.dataset.dir === direction);
         });
@@ -285,24 +283,18 @@
           const expression = exprBtn.dataset.expr;
 
           if (expression === 'happy') {
-            // Apply happy expression
+            isExpressionActive = true;
+
             leftEye.className = 'eye happy';
             rightEye.className = 'eye happy';
 
-            // Set to wide-up position
-            const transform = LOOK_DIRECTIONS['wide-up'];
-            const fullTransform = `translate(-50%, -50%) ${transform}`;
-            leftEye.style.transform = fullTransform;
-            rightEye.style.transform = fullTransform;
+            leftEye.style.transform = 'translate(-50%, -50%) translateY(-3rem)';
+            rightEye.style.transform = 'translate(-50%, -50%) translateY(-3rem)';
 
-            // Disable manual controls
             document.querySelectorAll('[data-dir]').forEach(btn => {
               btn.disabled = true;
             });
 
-            isExpressionActive = true;
-
-            // Reset after 3 seconds
             setTimeout(() => {
               isExpressionActive = false;
               leftEye.className = 'eye';
@@ -340,7 +332,7 @@
       document.body.addEventListener('mousemove', function(e) {
         if (isIdleMode || isExpressionActive) return;
         
-        const rect = eyeBox.getBoundingClientRect();
+        const rect = document.getElementById('eye-box').getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         const x = e.clientX;
@@ -357,10 +349,7 @@
         else if (y < centerY - 60) direction = 'up';
         else if (y > centerY + 60) direction = 'down';
 
-        const transform = LOOK_DIRECTIONS[direction] || 'translate(0, 0)';
-        const fullTransform = `translate(-50%, -50%) ${transform}`;
-        leftEye.style.transform = fullTransform;
-        rightEye.style.transform = fullTransform;
+        setEyePosition(direction);
       });
 
       // Idle mode toggle
