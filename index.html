@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emotion Animation Viewer</title>
+  <style>
+    :root {
+      --bg: #f0f2f5;
+      --text: #2c3e50;
+      --card-bg: #fff;
+      --border: #ccc;
+    }
+
+    .dark {
+      --bg: #1a1a1a;
+      --text: #f0f0f0;
+      --card-bg: #2d2d2d;
+      --border: #555;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    select, button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #e0e0e0;
+    }
+
+    #animation {
+      max-width: 100%;
+      height: auto;
+      max-height: 400px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--card-bg);
+      margin: 0 auto 2rem;
+      display: none;
+    }
+
+    #status {
+      margin-top: 1rem;
+      min-height: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎭 Emotion Animation Viewer</h1>
+    
+    <div class="controls">
+      <select id="emotionSelect">
+        <option value="">Select Emotion</option>
+        <option value="happy">😊 Happy</option>
+        <option value="sad">😢 Sad</option>
+        <option value="angry">😠 Angry</option>
+      </select>
+      
+      <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+    </div>
+    
+    <img id="animation" src="" alt="Emotion Frame" />
+    <div id="status">Select an emotion to start</div>
+  </div>
+
+  <script>
+    const emotionSelect = document.getElementById('emotionSelect');
+    const animationImg = document.getElementById('animation');
+    const status = document.getElementById('status');
+
+    // Define emotion frames (update with your actual frame count and folder structure)
+    const emotionFrames = {
+      happy: Array.from({length: 10}, (_, i) => `images/happy/frame_${String(i+1).padStart(2, '0')}.png`),
+      sad: Array.from({length: 8}, (_, i) => `images/sad/frame_${String(i+1).padStart(2, '0')}.png`),
+      angry: Array.from({length: 12}, (_, i) => `images/angry/frame_${String(i+1).padStart(2, '0')}.png`)
+    };
+
+    let currentFrames = [];
+    let currentFrameIndex = 0;
+    let animationInterval = null;
+    const frameDelay = 100; // ms per frame
+
+    // Load selected emotion
+    emotionSelect.addEventListener('change', (e) => {
+      const emotion = e.target.value;
+      
+      if (!emotion || !emotionFrames[emotion]) {
+        status.textContent = 'Please select a valid emotion';
+        return;
+      }
+
+      currentFrames = emotionFrames[emotion];
+      currentFrameIndex = 0;
+      status.textContent = `Loaded ${currentFrames.length} frames for ${emotion}`;
+      animationImg.style.display = 'block';
+      animationImg.src = currentFrames[0];
+      
+      // Start animation automatically
+      startAnimation();
+    });
+
+    // Start animation
+    function startAnimation() {
+      if (animationInterval) clearInterval(animationInterval);
+      animationInterval = setInterval(() => {
+        currentFrameIndex = (currentFrameIndex + 1) % currentFrames.length;
+        animationImg.src = currentFrames[currentFrameIndex];
+      }, frameDelay);
+      status.textContent = `Playing ${emotionSelect.value} animation...`;
+    }
+
+    // Toggle dark mode
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+    }
+  </script>
+</body>
+</html>
