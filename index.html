@@ -91,9 +91,9 @@
     }
 
     @keyframes vibrate {
-      0% { transform: translate(-50%, -50%) translateY(0); }
-      50% { transform: translate(-50%, -50%) translateY(-2px); }
-      100% { transform: translate(-50%, -50%) translateY(0); }
+      0% { transform: translate(-50%, -50%) translateY(-3rem); }
+      50% { transform: translate(-50%, -50%) translateY(-3.2rem); }
+      100% { transform: translate(-50%, -50%) translateY(-3rem); }
     }
 
     .blink {
@@ -284,14 +284,16 @@
 
           if (expression === 'happy') {
             isExpressionActive = true;
+            clearIdleTimer();
 
             leftEye.className = 'eye happy';
             rightEye.className = 'eye happy';
 
-            // Use wide-up direction from LOOK_DIRECTIONS
-            const wideUpTransform = LOOK_DIRECTIONS['wide-up'];
-            leftEye.style.transform = `translate(-50%, -50%) ${wideUpTransform}`;
-            rightEye.style.transform = `translate(-50%, -50%) ${wideUpTransform}`;
+            // Fixed: Set the transform directly for happy expression
+            // Override the animation's transform with the wide-up position
+            const wideUpTransform = `translate(-50%, -50%) ${LOOK_DIRECTIONS['wide-up']}`;
+            leftEye.style.transform = wideUpTransform;
+            rightEye.style.transform = wideUpTransform;
 
             document.querySelectorAll('[data-dir]').forEach(btn => {
               btn.disabled = true;
@@ -305,6 +307,12 @@
               document.querySelectorAll('[data-dir]').forEach(btn => {
                 btn.disabled = false;
               });
+              
+              // Restore idle mode if it was active
+              if (idleMode.checked) {
+                isIdleMode = true;
+                setupIdleMovement();
+              }
             }, 5000);
           }
           return;
