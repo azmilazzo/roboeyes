@@ -15,7 +15,6 @@
       align-items: center;
       padding: 2rem;
     }
-
     .card {
       max-width: 48rem;
       width: 100%;
@@ -23,26 +22,22 @@
       border-radius: 1rem;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
-      margin: auto; /* Center horizontally */
+      margin: auto;
     }
-
     .card-header {
       text-align: center;
       padding: 1.5rem;
     }
-
     .card-title {
       font-size: 2rem;
       font-weight: bold;
     }
-
     .card-content {
       padding: 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     /* Eye container */
     .eye-box {
       width: 24rem;
@@ -57,20 +52,17 @@
       overflow: hidden;
       cursor: crosshair;
     }
-
     .eyes {
       display: flex;
       gap: 5rem;
       position: relative;
     }
-
     .eye-container {
       width: 6rem;
       height: 6rem;
       position: relative;
       overflow: visible;
     }
-
     .eye {
       width: 6rem;
       height: 6rem;
@@ -82,26 +74,33 @@
       transform: translate(-50%, -50%);
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     /* Happy expression */
     .eye.happy {
       background: #facc15;
       border-radius: 2rem 2rem 0 0;
       animation: vibrate 0.3s ease-in-out infinite;
     }
-
+    /* Sad expression */
+    .eye.sad {
+      background: #93c5fd;
+      border-radius: 0 0 2rem 2rem;
+      animation: droop 0.5s ease-in-out infinite;
+    }
     @keyframes vibrate {
       0% { transform: translate(-50%, -50%) translateY(-3rem); }
       50% { transform: translate(-50%, -50%) translateY(-3.2rem); }
       100% { transform: translate(-50%, -50%) translateY(-3rem); }
     }
-
+    @keyframes droop {
+      0% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(0.5rem); }
+      100% { transform: translate(-50%, -50%) translateY(0); }
+    }
     .blink {
       height: 0.25rem !important;
       transform: scaleY(0.05) translate(-50%, -50%) !important;
       transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-
     /* Controls */
     .controls-grid {
       display: grid;
@@ -110,7 +109,6 @@
       width: 100%;
       max-width: 32rem;
     }
-
     .control-button {
       padding: 0.75rem;
       background: #e5e7eb;
@@ -119,11 +117,9 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .control-button:hover {
       background: #d1d5db;
     }
-
     .control-button.active {
       background: #1f2937;
       color: white;
@@ -136,7 +132,6 @@
     <div class="card-header">
       <div class="card-title">Expressive Robot Eyes</div>
     </div>
-    
     <div class="card-content">
       <!-- Eye Display -->
       <div class="eye-box" id="eye-box">
@@ -145,21 +140,18 @@
           <div class="eye-container">
             <div class="eye" id="left-eye"></div>
           </div>
-          
           <!-- Right Eye -->
           <div class="eye-container">
             <div class="eye" id="right-eye"></div>
           </div>
         </div>
       </div>
-
       <!-- Controls -->
       <div class="controls-grid" id="controls">
         <label>
           <input type="checkbox" id="idle-mode" checked>
           Idle Mode
         </label>
-
         <button data-dir="center">Center</button>
         <button data-dir="left">Left</button>
         <button data-dir="right">Right</button>
@@ -174,10 +166,10 @@
         <button data-dir="wide-up">Wide Up</button>
         <button data-dir="wide-down">Wide Down</button>
         <button data-expr="happy">😄 Happy</button>
+        <button data-expr="sad">😢 Sad</button> <!-- New Sad Button -->
       </div>
     </div>
   </div>
-
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const LOOK_DIRECTIONS = {
@@ -195,110 +187,88 @@
         'wide-up': 'translateY(-3rem)',
         'wide-down': 'translateY(3rem)'
       };
-
       let isBlinking = false;
       let lookDirection = 'center';
       let isIdleMode = true;
       let idleTimer = null;
       let isExpressionActive = false;
-
       const leftEye = document.getElementById('left-eye');
       const rightEye = document.getElementById('right-eye');
       const idleMode = document.getElementById('idle-mode');
-
       if (!leftEye || !rightEye || !idleMode) {
         console.error('Required DOM elements not found!');
         return;
       }
-
       function clearIdleTimer() {
         if (idleTimer) {
           clearTimeout(idleTimer);
           idleTimer = null;
         }
       }
-
       function setEyePosition(direction) {
         // Removed the condition blocking non-center directions during idle mode
         const transform = LOOK_DIRECTIONS[direction] || 'translate(0, 0)';
         const fullTransform = `translate(-50%, -50%) ${transform}`;
         leftEye.style.transform = fullTransform;
         rightEye.style.transform = fullTransform;
-
         document.querySelectorAll('[data-dir]').forEach(btn => {
           btn.classList.toggle('active', btn.dataset.dir === direction);
         });
       }
-
       function setupBlinking() {
         const blink = () => {
           if (isBlinking) return;
           isBlinking = true;
           leftEye.classList.add('blink');
           rightEye.classList.add('blink');
-
           setTimeout(() => {
             leftEye.classList.remove('blink');
             rightEye.classList.remove('blink');
             isBlinking = false;
           }, 150);
-
           setTimeout(blink, Math.random() * 2000 + 2000);
         };
-        
         setTimeout(blink, Math.random() * 1500 + 1000);
       }
-
       function setupIdleMovement() {
         if (!isIdleMode) {
           clearIdleTimer();
           setEyePosition('center');
           return;
         }
-
         const directions = Object.keys(LOOK_DIRECTIONS);
-        
         const moveEyes = () => {
           let newDirection;
           do {
             newDirection = directions[Math.floor(Math.random() * directions.length)];
           } while (newDirection === lookDirection && Math.random() > 0.3);
-
           lookDirection = newDirection;
           setEyePosition(newDirection);
-          
           const nextMove = Math.random() * 2000 + 1500;
           idleTimer = setTimeout(moveEyes, nextMove);
         };
-
         // Initial delay
         const initialDelay = Math.random() * 1500 + 1000;
         idleTimer = setTimeout(moveEyes, initialDelay);
       }
-
       // Manual control and expressions
       document.getElementById('controls').addEventListener('click', function (e) {
         const exprBtn = e.target.closest('[data-expr]');
         if (exprBtn) {
           const expression = exprBtn.dataset.expr;
-
           if (expression === 'happy') {
             isExpressionActive = true;
             clearIdleTimer();
-
             leftEye.className = 'eye happy';
             rightEye.className = 'eye happy';
-
             // Fixed: Set the transform directly for happy expression
             // Override the animation's transform with the wide-up position
             const wideUpTransform = `translate(-50%, -50%) ${LOOK_DIRECTIONS['wide-up']}`;
             leftEye.style.transform = wideUpTransform;
             rightEye.style.transform = wideUpTransform;
-
             document.querySelectorAll('[data-dir]').forEach(btn => {
               btn.disabled = true;
             });
-
             setTimeout(() => {
               isExpressionActive = false;
               leftEye.className = 'eye';
@@ -307,7 +277,6 @@
               document.querySelectorAll('[data-dir]').forEach(btn => {
                 btn.disabled = false;
               });
-              
               // Restore idle mode if it was active
               if (idleMode.checked) {
                 isIdleMode = true;
@@ -315,13 +284,36 @@
               }
             }, 5000);
           }
-          return;
+          // Sad expression
+          if (expression === 'sad') {
+            isExpressionActive = true;
+            clearIdleTimer();
+            leftEye.className = 'eye sad';
+            rightEye.className = 'eye sad';
+            const wideDownTransform = `translate(-50%, -50%) ${LOOK_DIRECTIONS['wide-down']}`;
+            leftEye.style.transform = wideDownTransform;
+            rightEye.style.transform = wideDownTransform;
+            document.querySelectorAll('[data-dir]').forEach(btn => {
+              btn.disabled = true;
+            });
+            setTimeout(() => {
+              isExpressionActive = false;
+              leftEye.className = 'eye';
+              rightEye.className = 'eye';
+              setEyePosition('center');
+              document.querySelectorAll('[data-dir]').forEach(btn => {
+                btn.disabled = false;
+              });
+              if (idleMode.checked) {
+                isIdleMode = true;
+                setupIdleMovement();
+              }
+            }, 5000);
+          }
         }
-
         const dirBtn = e.target.closest('[data-dir]');
         if (dirBtn) {
           const direction = dirBtn.dataset.dir;
-          
           if (direction === 'center') {
             isIdleMode = false;
             idleMode.checked = false;
@@ -330,26 +322,21 @@
             setEyePosition(direction);
             return;
           }
-          
           if (!isIdleMode && !isExpressionActive) {
             lookDirection = direction;
             setEyePosition(direction);
           }
         }
       });
-
       // Full-screen mouse tracking
       document.body.addEventListener('mousemove', function(e) {
         if (isIdleMode || isExpressionActive) return;
-        
         const rect = document.getElementById('eye-box').getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         const x = e.clientX;
         const y = e.clientY;
-        
         let direction = 'center';
-
         if (x < centerX - 100 && y < centerY - 60) direction = 'up-left';
         else if (x > centerX + 100 && y < centerY - 60) direction = 'up-right';
         else if (x < centerX - 100 && y > centerY + 60) direction = 'down-left';
@@ -358,10 +345,8 @@
         else if (x > centerX + 60) direction = 'right';
         else if (y < centerY - 60) direction = 'up';
         else if (y > centerY + 60) direction = 'down';
-
         setEyePosition(direction);
       });
-
       // Idle mode toggle
       idleMode.addEventListener('change', function() {
         isIdleMode = this.checked;
@@ -372,7 +357,6 @@
           setEyePosition('center');
         }
       });
-
       // Initial setup
       setupBlinking();
       setupIdleMovement();
