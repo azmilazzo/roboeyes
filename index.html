@@ -22,7 +22,7 @@
       border-radius: 1rem;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
-      margin: auto;
+      margin: auto; /* Center horizontally */
     }
     .card-header {
       text-align: center;
@@ -74,27 +74,26 @@
       transform: translate(-50%, -50%);
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    /* Happy expression */
+    /* Happy expression (same color as normal) */
     .eye.happy {
-      background: #facc15;
       border-radius: 2rem 2rem 0 0;
       animation: vibrate 0.3s ease-in-out infinite;
-    }
-    /* Sad expression */
-    .eye.sad {
-      background: #93c5fd;
-      border-radius: 0 0 2rem 2rem;
-      animation: droop 0.5s ease-in-out infinite;
     }
     @keyframes vibrate {
       0% { transform: translate(-50%, -50%) translateY(-3rem); }
       50% { transform: translate(-50%, -50%) translateY(-3.2rem); }
       100% { transform: translate(-50%, -50%) translateY(-3rem); }
     }
+    /* Sad expression */
+    .eye.sad {
+      background: #1e40af;
+      border-radius: 0 0 2rem 2rem;
+      animation: droop 0.5s ease-in-out infinite;
+    }
     @keyframes droop {
-      0% { transform: translate(-50%, -50%) translateY(0); }
-      50% { transform: translate(-50%, -50%) translateY(0.5rem); }
-      100% { transform: translate(-50%, -50%) translateY(0); }
+      0% { transform: translate(-50%, -50%) translateY(3rem); }
+      50% { transform: translate(-50%, -50%) translateY(3.2rem); }
+      100% { transform: translate(-50%, -50%) translateY(3rem); }
     }
     .blink {
       height: 0.25rem !important;
@@ -166,7 +165,7 @@
         <button data-dir="wide-up">Wide Up</button>
         <button data-dir="wide-down">Wide Down</button>
         <button data-expr="happy">😄 Happy</button>
-        <button data-expr="sad">😢 Sad</button> <!-- New Sad Button -->
+        <button data-expr="sad">😢 Sad</button>
       </div>
     </div>
   </div>
@@ -206,7 +205,6 @@
         }
       }
       function setEyePosition(direction) {
-        // Removed the condition blocking non-center directions during idle mode
         const transform = LOOK_DIRECTIONS[direction] || 'translate(0, 0)';
         const fullTransform = `translate(-50%, -50%) ${transform}`;
         leftEye.style.transform = fullTransform;
@@ -256,13 +254,13 @@
         const exprBtn = e.target.closest('[data-expr]');
         if (exprBtn) {
           const expression = exprBtn.dataset.expr;
+          
           if (expression === 'happy') {
             isExpressionActive = true;
             clearIdleTimer();
             leftEye.className = 'eye happy';
             rightEye.className = 'eye happy';
-            // Fixed: Set the transform directly for happy expression
-            // Override the animation's transform with the wide-up position
+            // Apply wide-up transform for happy expression
             const wideUpTransform = `translate(-50%, -50%) ${LOOK_DIRECTIONS['wide-up']}`;
             leftEye.style.transform = wideUpTransform;
             rightEye.style.transform = wideUpTransform;
@@ -284,12 +282,13 @@
               }
             }, 5000);
           }
-          // Sad expression
+          
           if (expression === 'sad') {
             isExpressionActive = true;
             clearIdleTimer();
             leftEye.className = 'eye sad';
             rightEye.className = 'eye sad';
+            // Apply wide-down transform for sad expression
             const wideDownTransform = `translate(-50%, -50%) ${LOOK_DIRECTIONS['wide-down']}`;
             leftEye.style.transform = wideDownTransform;
             rightEye.style.transform = wideDownTransform;
@@ -304,6 +303,7 @@
               document.querySelectorAll('[data-dir]').forEach(btn => {
                 btn.disabled = false;
               });
+              // Restore idle mode if it was active
               if (idleMode.checked) {
                 isIdleMode = true;
                 setupIdleMovement();
