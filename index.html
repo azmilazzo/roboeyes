@@ -23,7 +23,7 @@
       border-radius: 1rem;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
-      margin: auto;
+      margin: auto; /* Center horizontally */
     }
 
     .card-header {
@@ -288,8 +288,10 @@
             leftEye.className = 'eye happy';
             rightEye.className = 'eye happy';
 
-            leftEye.style.transform = 'translate(-50%, -50%) translateY(-3rem)';
-            rightEye.style.transform = 'translate(-50%, -50%) translateY(-3rem)';
+            // Use wide-up direction from LOOK_DIRECTIONS
+            const wideUpTransform = LOOK_DIRECTIONS['wide-up'];
+            leftEye.style.transform = `translate(-50%, -50%) ${wideUpTransform}`;
+            rightEye.style.transform = `translate(-50%, -50%) ${wideUpTransform}`;
 
             document.querySelectorAll('[data-dir]').forEach(btn => {
               btn.disabled = true;
@@ -303,7 +305,7 @@
               document.querySelectorAll('[data-dir]').forEach(btn => {
                 btn.disabled = false;
               });
-            }, 3000);
+            }, 5000);
           }
           return;
         }
