@@ -98,15 +98,51 @@
     /* Angry expression */
     .eye.angry {
       background: #dc2626;
-      transform: translate(-50%, -50%) rotate(45deg);
+      height: 4rem;
+      width: 2rem;
+      clip-path: polygon(0% 50%, 100% 0%, 100% 100%);
+      transform: translate(-50%, -50%);
       animation: angry-shake 0.1s ease-in-out infinite;
     }
+    .eye.angry.left {
+      transform: translate(-50%, -50%) scaleX(-1);
+    }
+    .eye.angry.right {
+      transform: translate(-50%, -50%);
+    }
     @keyframes angry-shake {
-      0% { transform: translate(-50%, -50%) rotate(45deg) translate(0, 0); }
-      25% { transform: translate(-50%, -50%) rotate(45deg) translate(-0.1rem, 0.1rem); }
-      50% { transform: translate(-50%, -50%) rotate(45deg) translate(0.1rem, -0.1rem); }
-      75% { transform: translate(-50%, -50%) rotate(45deg) translate(-0.1rem, -0.1rem); }
-      100% { transform: translate(-50%, -50%) rotate(45deg) translate(0, 0); }
+      0% { transform: translate(-50%, -50%) translateY(3rem); }
+      25% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
+      50% { transform: translate(-50%, -50%) translate(-0.1rem, 3rem); }
+      75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
+      100% { transform: translate(-50%, -50%) translateY(3rem); }
+    }
+    
+    /* Anger symbol animation */
+    .anger-symbol {
+      position: absolute;
+      top: 20%;
+      right: 20%;
+      font-size: 2.5rem;
+      opacity: 0;
+      animation: pulse 0.5s ease-in-out infinite alternate;
+      z-index: 10;
+      display: none;
+    }
+    @keyframes angry-shake-left {
+      0% { transform: translate(-50%, -50%) translateY(3rem) scaleX(-1); }
+      25% { transform: translate(-50%, -50%) translate(0.1rem, 3rem) scaleX(-1); }
+      50% { transform: translate(-50%, -50%) translate(-0.1rem, 3rem) scaleX(-1); }
+      75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem) scaleX(-1); }
+      100% { transform: translate(-50%, -50%) translateY(3rem) scaleX(-1); }
+    }
+    
+    @keyframes angry-shake-right {
+      0% { transform: translate(-50%, -50%) translateY(3rem); }
+      25% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
+      50% { transform: translate(-50%, -50%) translate(-0.1rem, 3rem); }
+      75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
+      100% { transform: translate(-50%, -50%) translateY(3rem); }
     }
     .blink {
       height: 0.25rem !important;
@@ -157,6 +193,8 @@
             <div class="eye" id="right-eye"></div>
           </div>
         </div>
+        <!-- Anger symbol -->
+        <div class="anger-symbol" id="anger-symbol">💢</div>
       </div>
       <!-- Controls -->
       <div class="controls-grid" id="controls">
@@ -209,8 +247,9 @@
       const leftEye = document.getElementById('left-eye');
       const rightEye = document.getElementById('right-eye');
       const idleMode = document.getElementById('idle-mode');
+      const angerSymbol = document.getElementById('anger-symbol');
       
-      if (!leftEye || !rightEye || !idleMode) {
+      if (!leftEye || !rightEye || !idleMode || !angerSymbol) {
         console.error('Required DOM elements not found!');
         return;
       }
@@ -240,6 +279,8 @@
         // Reset eyes to normal state
         leftEye.className = 'eye';
         rightEye.className = 'eye';
+        angerSymbol.style.opacity = '0';
+        angerSymbol.style.display = 'none';
         currentExpression = null;
         isExpressionActive = false;
         setEyePosition('center');
@@ -308,15 +349,25 @@
         clearIdleTimer();
         
         // Apply expression-specific styles and animations
-        leftEye.className = `eye ${expression}`;
-        rightEye.className = `eye ${expression}`;
+        if (expression === 'angry') {
+          leftEye.className = `eye ${expression} left`;
+          rightEye.className = `eye ${expression} right`;
+          angerSymbol.style.display = 'block';
+          angerSymbol.style.opacity = '1';
+        } else {
+          leftEye.className = `eye ${expression}`;
+          rightEye.className = `eye ${expression}`;
+        }
         
         // Disable direction buttons during expressions
         document.querySelectorAll('[data-dir]').forEach(btn => {
           btn.disabled = true;
         });
         
-        // Remove expression after 5 seconds
+        // Expression duration - longer for better visibility
+        const expressionDuration = 8000; // 8 seconds
+        
+        // Remove expression after duration
         setTimeout(() => {
           resetEyes();
           
@@ -330,7 +381,7 @@
             isIdleMode = true;
             setupIdleMovement();
           }
-        }, 5000);
+        }, expressionDuration);
       }
       
       // Manual control and expressions
