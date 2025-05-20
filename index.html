@@ -22,7 +22,7 @@
       border-radius: 1rem;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       overflow: hidden;
-      margin: auto; /* Center horizontally */
+      margin: auto;
     }
     .card-header {
       text-align: center;
@@ -54,7 +54,7 @@
     }
     .eyes {
       display: flex;
-      gap: 5rem;
+      gap: 3rem;
       position: relative;
     }
     .eye-container {
@@ -64,8 +64,8 @@
       overflow: visible;
     }
     .eye {
-      width: 6rem;
-      height: 6rem;
+      width: 5.5rem;
+      height: 5.5rem;
       background: #3b82f6;
       border-radius: 0.5rem;
       position: absolute;
@@ -98,17 +98,17 @@
     /* Angry expression */
     .eye.angry {
       background: #dc2626;
-      height: 4rem;
-      width: 2rem;
-      clip-path: polygon(0% 50%, 100% 0%, 100% 100%);
+      height: 5.5rem;
+      width: 7rem;
       transform: translate(-50%, -50%);
       animation: angry-shake 0.1s ease-in-out infinite;
     }
-    .eye.angry.left {
-      transform: translate(-50%, -50%) scaleX(-1);
-    }
     .eye.angry.right {
-      transform: translate(-50%, -50%);
+      clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
+    }
+    .eye.angry.left {
+      clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      transform: translate(-50%, -50%) scaleX(-1);
     }
     @keyframes angry-shake {
       0% { transform: translate(-50%, -50%) translateY(3rem); }
@@ -117,7 +117,6 @@
       75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
       100% { transform: translate(-50%, -50%) translateY(3rem); }
     }
-    
     /* Anger symbol animation */
     .anger-symbol {
       position: absolute;
@@ -128,21 +127,6 @@
       animation: pulse 0.5s ease-in-out infinite alternate;
       z-index: 10;
       display: none;
-    }
-    @keyframes angry-shake-left {
-      0% { transform: translate(-50%, -50%) translateY(3rem) scaleX(-1); }
-      25% { transform: translate(-50%, -50%) translate(0.1rem, 3rem) scaleX(-1); }
-      50% { transform: translate(-50%, -50%) translate(-0.1rem, 3rem) scaleX(-1); }
-      75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem) scaleX(-1); }
-      100% { transform: translate(-50%, -50%) translateY(3rem) scaleX(-1); }
-    }
-    
-    @keyframes angry-shake-right {
-      0% { transform: translate(-50%, -50%) translateY(3rem); }
-      25% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
-      50% { transform: translate(-50%, -50%) translate(-0.1rem, 3rem); }
-      75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
-      100% { transform: translate(-50%, -50%) translateY(3rem); }
     }
     .blink {
       height: 0.25rem !important;
@@ -248,35 +232,27 @@
       const rightEye = document.getElementById('right-eye');
       const idleMode = document.getElementById('idle-mode');
       const angerSymbol = document.getElementById('anger-symbol');
-      
       if (!leftEye || !rightEye || !idleMode || !angerSymbol) {
         console.error('Required DOM elements not found!');
         return;
       }
-      
       function clearIdleTimer() {
         if (idleTimer) {
           clearTimeout(idleTimer);
           idleTimer = null;
         }
       }
-      
       function setEyePosition(direction) {
-        // Only set position when no expression is active
         if (isExpressionActive) return;
-        
         const transform = LOOK_DIRECTIONS[direction] || 'translate(0, 0)';
         const fullTransform = `translate(-50%, -50%) ${transform}`;
         leftEye.style.transform = fullTransform;
         rightEye.style.transform = fullTransform;
-        
         document.querySelectorAll('[data-dir]').forEach(btn => {
           btn.classList.toggle('active', btn.dataset.dir === direction);
         });
       }
-      
       function resetEyes() {
-        // Reset eyes to normal state
         leftEye.className = 'eye';
         rightEye.className = 'eye';
         angerSymbol.style.opacity = '0';
@@ -285,70 +261,50 @@
         isExpressionActive = false;
         setEyePosition('center');
       }
-      
       function setupBlinking() {
         const blink = () => {
-          // Don't blink during expressions
           if (isBlinking || isExpressionActive) return;
-          
           isBlinking = true;
           leftEye.classList.add('blink');
           rightEye.classList.add('blink');
-          
           setTimeout(() => {
             leftEye.classList.remove('blink');
             rightEye.classList.remove('blink');
             isBlinking = false;
           }, 150);
-          
           setTimeout(blink, Math.random() * 2000 + 2000);
         };
-        
         setTimeout(blink, Math.random() * 1500 + 1000);
       }
-      
       function setupIdleMovement() {
         if (!isIdleMode || isExpressionActive) {
           clearIdleTimer();
           if (!isExpressionActive) setEyePosition('center');
           return;
         }
-        
         const directions = Object.keys(LOOK_DIRECTIONS);
-        
         const moveEyes = () => {
           if (isExpressionActive) {
             idleTimer = setTimeout(moveEyes, 500);
             return;
           }
-          
           let newDirection;
           do {
             newDirection = directions[Math.floor(Math.random() * directions.length)];
           } while (newDirection === lookDirection && Math.random() > 0.3);
-          
           lookDirection = newDirection;
           setEyePosition(newDirection);
-          
           const nextMove = Math.random() * 2000 + 1500;
           idleTimer = setTimeout(moveEyes, nextMove);
         };
-        
-        // Initial delay
         const initialDelay = Math.random() * 1500 + 1000;
         idleTimer = setTimeout(moveEyes, initialDelay);
       }
-      
       function setExpression(expression) {
-        // Clear any previous expression
         resetEyes();
-        
-        // Set the new expression
         isExpressionActive = true;
         currentExpression = expression;
         clearIdleTimer();
-        
-        // Apply expression-specific styles and animations
         if (expression === 'angry') {
           leftEye.className = `eye ${expression} left`;
           rightEye.className = `eye ${expression} right`;
@@ -358,33 +314,21 @@
           leftEye.className = `eye ${expression}`;
           rightEye.className = `eye ${expression}`;
         }
-        
-        // Disable direction buttons during expressions
         document.querySelectorAll('[data-dir]').forEach(btn => {
           btn.disabled = true;
         });
-        
-        // Expression duration - longer for better visibility
-        const expressionDuration = 8000; // 8 seconds
-        
-        // Remove expression after duration
+        const expressionDuration = 8000;
         setTimeout(() => {
           resetEyes();
-          
-          // Re-enable direction buttons
           document.querySelectorAll('[data-dir]').forEach(btn => {
             btn.disabled = false;
           });
-          
-          // Restore idle mode if it was active
           if (idleMode.checked) {
             isIdleMode = true;
             setupIdleMovement();
           }
         }, expressionDuration);
       }
-      
-      // Manual control and expressions
       document.getElementById('controls').addEventListener('click', function (e) {
         const exprBtn = e.target.closest('[data-expr]');
         if (exprBtn) {
@@ -392,7 +336,6 @@
           setExpression(expression);
           return;
         }
-        
         const dirBtn = e.target.closest('[data-dir]');
         if (dirBtn) {
           const direction = dirBtn.dataset.dir;
@@ -404,26 +347,20 @@
             setEyePosition(direction);
             return;
           }
-          
           if (!isIdleMode && !isExpressionActive) {
             lookDirection = direction;
             setEyePosition(direction);
           }
         }
       });
-      
-      // Full-screen mouse tracking
       document.getElementById('eye-box').addEventListener('mousemove', function(e) {
         if (isIdleMode || isExpressionActive) return;
-        
         const rect = this.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         const x = e.clientX;
         const y = e.clientY;
-        
         let direction = 'center';
-        
         if (x < centerX - 100 && y < centerY - 60) direction = 'up-left';
         else if (x > centerX + 100 && y < centerY - 60) direction = 'up-right';
         else if (x < centerX - 100 && y > centerY + 60) direction = 'down-left';
@@ -432,14 +369,10 @@
         else if (x > centerX + 60) direction = 'right';
         else if (y < centerY - 60) direction = 'up';
         else if (y > centerY + 60) direction = 'down';
-        
         setEyePosition(direction);
       });
-      
-      // Idle mode toggle
       idleMode.addEventListener('change', function() {
         isIdleMode = this.checked;
-        
         if (isIdleMode) {
           setupIdleMovement();
         } else {
@@ -447,8 +380,6 @@
           setEyePosition('center');
         }
       });
-      
-      // Initial setup
       setupBlinking();
       setupIdleMovement();
     });
