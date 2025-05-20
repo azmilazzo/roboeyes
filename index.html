@@ -54,18 +54,18 @@
     }
     .eyes {
       display: flex;
-      gap: 3rem;
+      gap: 3rem; /* Reduced gap to 3rem */
       position: relative;
     }
     .eye-container {
-      width: 6rem;
-      height: 6rem;
+      width: 5rem;
+      height: 5rem;
       position: relative;
       overflow: visible;
     }
     .eye {
-      width: 5.5rem;
-      height: 5.5rem;
+      width: 5rem;
+      height: 5rem;
       background: #3b82f6;
       border-radius: 0.5rem;
       position: absolute;
@@ -80,9 +80,9 @@
       animation: happy-bounce 0.3s ease-in-out infinite;
     }
     @keyframes happy-bounce {
-      0% { transform: translate(-50%, -50%) translateY(-3rem); }
-      50% { transform: translate(-50%, -50%) translateY(-3.2rem); }
-      100% { transform: translate(-50%, -50%) translateY(-3rem); }
+      0% { transform: translate(-50%, -50%) translateY(-2.5rem); }
+      50% { transform: translate(-50%, -50%) translateY(-2.7rem); }
+      100% { transform: translate(-50%, -50%) translateY(-2.5rem); }
     }
     /* Sad expression */
     .eye.sad {
@@ -91,20 +91,18 @@
       animation: sad-droop 0.5s ease-in-out infinite;
     }
     @keyframes sad-droop {
-      0% { transform: translate(-50%, -50%) translateY(3rem); }
-      50% { transform: translate(-50%, -50%) translateY(3.2rem); }
-      100% { transform: translate(-50%, -50%) translateY(3rem); }
+      0% { transform: translate(-50%, -50%) translateY(2.5rem); }
+      50% { transform: translate(-50%, -50%) translateY(2.7rem); }
+      100% { transform: translate(-50%, -50%) translateY(2.5rem); }
     }
     /* Angry expression */
     .eye.angry {
       background: #dc2626;
       height: 5.5rem;
       width: 7rem;
+      clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
       transform: translate(-50%, -50%);
       animation: angry-shake 0.1s ease-in-out infinite;
-    }
-    .eye.angry.right {
-      clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
     }
     .eye.angry.left {
       clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
@@ -116,6 +114,35 @@
       50% { transform: translate(-50%, -50%) translate(-0.1rem, 3rem); }
       75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
       100% { transform: translate(-50%, -50%) translateY(3rem); }
+    }
+    /* Dizzy expression */
+    .eye.dizzy {
+      background: transparent;
+    }
+    .eye.dizzy::before {
+      content: '';
+      --b: 8px;
+      --s: 80px;
+      --c: #CD8C52;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: var(--s);
+      aspect-ratio: 1;
+      background: 
+        repeating-radial-gradient(calc(2*var(--b)) at top,#0000 -1px,var(--c) 0 calc(50% - 1px),#0000 50% calc(100% - 1px)) calc(50% + var(--b)) 100%, 
+        repeating-radial-gradient(calc(2*var(--b)) at bottom,var(--c) -1px,#0000 0 calc(50% - 1px),var(--c) 50% calc(100% - 1px)) 50% 0;
+      background-size: 150% 50%;
+      background-repeat: no-repeat;
+      mask: 
+        radial-gradient(calc(1.5*var(--b)) at calc(100% - var(--b)/2) 0, #0000 calc(100%/3), #000 calc(100%/3 + 1px) 110%, #0000 0) calc(50% + var(--b)/2) 
+         100%/calc(3*var(--b)) 50% exclude no-repeat, 
+        conic-gradient(#000 0 0);
+      animation: spiral-rotate 1s linear infinite;
+    }
+    @keyframes spiral-rotate {
+      to { transform: translate(-50%, -50%) rotate(-360deg); }
     }
     /* Anger symbol animation */
     .anger-symbol {
@@ -202,6 +229,7 @@
         <button data-expr="happy">😄 Happy</button>
         <button data-expr="sad">😢 Sad</button>
         <button data-expr="angry">😠 Angry</button>
+        <button data-expr="dizzy">💫 Dizzy</button>
       </div>
     </div>
   </div>
@@ -310,6 +338,9 @@
           rightEye.className = `eye ${expression} right`;
           angerSymbol.style.display = 'block';
           angerSymbol.style.opacity = '1';
+        } else if (expression === 'dizzy') {
+          leftEye.className = 'eye dizzy';
+          rightEye.className = 'eye dizzy';
         } else {
           leftEye.className = `eye ${expression}`;
           rightEye.className = `eye ${expression}`;
