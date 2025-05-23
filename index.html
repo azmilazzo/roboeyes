@@ -54,7 +54,7 @@
     }
     .eyes {
       display: flex;
-      gap: 3rem; /* Reduced gap to 3rem */
+      gap: 3rem;
       position: relative;
     }
     .eye-container {
@@ -130,60 +130,49 @@
       transform: translate(-50%, -50%);
       width: var(--s);
       aspect-ratio: 1;
-      background: 
-        repeating-radial-gradient(calc(2*var(--b)) at top,#0000 -1px,var(--c) 0 calc(50% - 1px),#0000 50% calc(100% - 1px)) calc(50% + var(--b)) 100%, 
+      background:
+        repeating-radial-gradient(calc(2*var(--b)) at top,#0000 -1px,var(--c) 0 calc(50% - 1px),#0000 50% calc(100% - 1px)) calc(50% + var(--b)) 100%,
         repeating-radial-gradient(calc(2*var(--b)) at bottom,var(--c) -1px,#0000 0 calc(50% - 1px),var(--c) 50% calc(100% - 1px)) 50% 0;
       background-size: 150% 50%;
       background-repeat: no-repeat;
-      mask: 
-        radial-gradient(calc(1.5*var(--b)) at calc(100% - var(--b)/2) 0, #0000 calc(100%/3), #000 calc(100%/3 + 1px) 110%, #0000 0) calc(50% + var(--b)/2) 
-         100%/calc(3*var(--b)) 50% exclude no-repeat, 
+      mask:
+        radial-gradient(calc(1.5*var(--b)) at calc(100% - var(--b)/2) 0, #0000 calc(100%/3), #000 calc(100%/3 + 1px) 110%, #0000 0) calc(50% + var(--b)/2)
+         100%/calc(3*var(--b)) 50% exclude no-repeat,
         conic-gradient(#000 0 0);
       animation: spiral-rotate 1s linear infinite;
     }
     @keyframes spiral-rotate {
       to { transform: translate(-50%, -50%) rotate(-360deg); }
     }
-    
     /* Love expression */
     .eye.love {
-      background: transparent;
-      animation: heart-beat 1s ease-in-out infinite;
-      overflow: visible;
+      background: #ec4899;
+      border-radius: 50%;
+      position: relative;
+      animation: love-pulse 1s ease-in-out infinite;
     }
     .eye.love::before {
-      content: '';
+      content: '♥';
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 4rem;
-      height: 3.6rem;
-      background: #ff2e7e;
-      transform: translate(-50%, -50%) rotate(-45deg);
-      clip-path: polygon(
-        50% 0%, 
-        100% 35%, 
-        100% 70%, 
-        50% 100%, 
-        0% 70%, 
-        0% 35%
-      );
-      animation: heart-grow 2s ease-in-out infinite;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: white;
+      animation: heart-beat 0.8s ease-in-out infinite;
     }
-    @keyframes heart-grow {
-      0% { transform: translate(-50%, -50%) rotate(-45deg) scale(0.6); }
-      50% { transform: translate(-50%, -50%) rotate(-45deg) scale(1.1); }
-      100% { transform: translate(-50%, -50%) rotate(-45deg) scale(0.6); }
+    @keyframes love-pulse {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); }
     }
     @keyframes heart-beat {
       0% { transform: translate(-50%, -50%) scale(1); }
-      15% { transform: translate(-50%, -50%) scale(1.05); }
-      30% { transform: translate(-50%, -50%) scale(1); }
-      45% { transform: translate(-50%, -50%) scale(1.05); }
-      60% { transform: translate(-50%, -50%) scale(1); }
+      25% { transform: translate(-50%, -50%) scale(1.2); }
+      50% { transform: translate(-50%, -50%) scale(1); }
+      75% { transform: translate(-50%, -50%) scale(1.1); }
       100% { transform: translate(-50%, -50%) scale(1); }
     }
-    
     /* Anger symbol animation */
     .anger-symbol {
       position: absolute;
@@ -244,219 +233,140 @@
             <div class="eye" id="right-eye"></div>
           </div>
         </div>
-        <!-- Anger symbol -->
-        <div class="anger-symbol" id="anger-symbol">💢</div>
       </div>
+      
       <!-- Controls -->
-      <div class="controls-grid" id="controls">
-        <label>
-          <input type="checkbox" id="idle-mode" checked>
-          Idle Mode
-        </label>
-        <button data-dir="center">Center</button>
-        <button data-dir="left">Left</button>
-        <button data-dir="right">Right</button>
-        <button data-dir="up">Up</button>
-        <button data-dir="down">Down</button>
-        <button data-dir="up-left">Up-Left</button>
-        <button data-dir="up-right">Up-Right</button>
-        <button data-dir="down-left">Down-Left</button>
-        <button data-dir="down-right">Down-Right</button>
-        <button data-dir="wide-left">Wide Left</button>
-        <button data-dir="wide-right">Wide Right</button>
-        <button data-dir="wide-up">Wide Up</button>
-        <button data-dir="wide-down">Wide Down</button>
-        <button data-expr="happy">😄 Happy</button>
-        <button data-expr="sad">😢 Sad</button>
-        <button data-expr="angry">😠 Angry</button>
-        <button data-expr="dizzy">💫 Dizzy</button>
-        <button data-expr="love">❤️ Love</button>
+      <div class="controls-grid">
+        <div class="control-button" onclick="setExpression('normal')">
+          😐 Normal
+        </div>
+        <div class="control-button" onclick="setExpression('happy')">
+          😊 Happy
+        </div>
+        <div class="control-button" onclick="setExpression('sad')">
+          😢 Sad
+        </div>
+        <div class="control-button" onclick="setExpression('angry')">
+          😠 Angry
+        </div>
+        <div class="control-button" onclick="setExpression('dizzy')">
+          😵 Dizzy
+        </div>
+        <div class="control-button" onclick="setExpression('love')">
+          💕 Love
+        </div>
+        <div class="control-button" onclick="blink()">
+          😉 Blink
+        </div>
       </div>
     </div>
   </div>
+
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const LOOK_DIRECTIONS = {
-        center: 'translate(0, 0)',
-        left: 'translateX(-2rem)',
-        right: 'translateX(2rem)',
-        up: 'translateY(-2rem)',
-        down: 'translateY(2rem)',
-        'up-left': 'translate(-2rem, -2rem)',
-        'up-right': 'translate(2rem, -2rem)',
-        'down-left': 'translate(-2rem, 2rem)',
-        'down-right': 'translate(2rem, 2rem)',
-        'wide-left': 'translateX(-3rem)',
-        'wide-right': 'translateX(3rem)',
-        'wide-up': 'translateY(-3rem)',
-        'wide-down': 'translateY(3rem)'
-      };
-      let isBlinking = false;
-      let lookDirection = 'center';
-      let isIdleMode = true;
-      let idleTimer = null;
-      let isExpressionActive = false;
-      let currentExpression = null;
+    let currentExpression = 'normal';
+    let isBlinking = false;
+    
+    function setExpression(expression) {
+      if (isBlinking) return;
+      
       const leftEye = document.getElementById('left-eye');
       const rightEye = document.getElementById('right-eye');
-      const idleMode = document.getElementById('idle-mode');
-      const angerSymbol = document.getElementById('anger-symbol');
-      if (!leftEye || !rightEye || !idleMode || !angerSymbol) {
-        console.error('Required DOM elements not found!');
-        return;
-      }
-      function clearIdleTimer() {
-        if (idleTimer) {
-          clearTimeout(idleTimer);
-          idleTimer = null;
-        }
-      }
-      function setEyePosition(direction) {
-        if (isExpressionActive) return;
-        const transform = LOOK_DIRECTIONS[direction] || 'translate(0, 0)';
-        const fullTransform = `translate(-50%, -50%) ${transform}`;
-        leftEye.style.transform = fullTransform;
-        rightEye.style.transform = fullTransform;
-        document.querySelectorAll('[data-dir]').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.dir === direction);
-        });
-      }
-      function resetEyes() {
-        leftEye.className = 'eye';
-        rightEye.className = 'eye';
-        angerSymbol.style.opacity = '0';
-        angerSymbol.style.display = 'none';
-        currentExpression = null;
-        isExpressionActive = false;
-        setEyePosition('center');
-      }
-      function setupBlinking() {
-        const blink = () => {
-          if (isBlinking || isExpressionActive) return;
-          isBlinking = true;
-          leftEye.classList.add('blink');
-          rightEye.classList.add('blink');
-          setTimeout(() => {
-            leftEye.classList.remove('blink');
-            rightEye.classList.remove('blink');
-            isBlinking = false;
-          }, 150);
-          setTimeout(blink, Math.random() * 2000 + 2000);
-        };
-        setTimeout(blink, Math.random() * 1500 + 1000);
-      }
-      function setupIdleMovement() {
-        if (!isIdleMode || isExpressionActive) {
-          clearIdleTimer();
-          if (!isExpressionActive) setEyePosition('center');
-          return;
-        }
-        const directions = Object.keys(LOOK_DIRECTIONS);
-        const moveEyes = () => {
-          if (isExpressionActive) {
-            idleTimer = setTimeout(moveEyes, 500);
-            return;
-          }
-          let newDirection;
-          do {
-            newDirection = directions[Math.floor(Math.random() * directions.length)];
-          } while (newDirection === lookDirection && Math.random() > 0.3);
-          lookDirection = newDirection;
-          setEyePosition(newDirection);
-          const nextMove = Math.random() * 2000 + 1500;
-          idleTimer = setTimeout(moveEyes, nextMove);
-        };
-        const initialDelay = Math.random() * 1500 + 1000;
-        idleTimer = setTimeout(moveEyes, initialDelay);
-      }
-      function setExpression(expression) {
-        resetEyes();
-        isExpressionActive = true;
-        currentExpression = expression;
-        clearIdleTimer();
-        if (expression === 'angry') {
-          leftEye.className = `eye ${expression} left`;
-          rightEye.className = `eye ${expression} right`;
-          angerSymbol.style.display = 'block';
-          angerSymbol.style.opacity = '1';
-        } else if (expression === 'dizzy') {
-          leftEye.className = 'eye dizzy';
-          rightEye.className = 'eye dizzy';
-        } else if (expression === 'love') {
-          leftEye.className = 'eye love';
-          rightEye.className = 'eye love';
-        } else {
-          leftEye.className = `eye ${expression}`;
-          rightEye.className = `eye ${expression}`;
-        }
-        document.querySelectorAll('[data-dir]').forEach(btn => {
-          btn.disabled = true;
-        });
-        const expressionDuration = 8000;
-        setTimeout(() => {
-          resetEyes();
-          document.querySelectorAll('[data-dir]').forEach(btn => {
-            btn.disabled = false;
-          });
-          if (idleMode.checked) {
-            isIdleMode = true;
-            setupIdleMovement();
-          }
-        }, expressionDuration);
-      }
-      document.getElementById('controls').addEventListener('click', function (e) {
-        const exprBtn = e.target.closest('[data-expr]');
-        if (exprBtn) {
-          const expression = exprBtn.dataset.expr;
-          setExpression(expression);
-          return;
-        }
-        const dirBtn = e.target.closest('[data-dir]');
-        if (dirBtn) {
-          const direction = dirBtn.dataset.dir;
-          if (direction === 'center') {
-            isIdleMode = false;
-            idleMode.checked = false;
-            clearIdleTimer();
-            lookDirection = direction;
-            setEyePosition(direction);
-            return;
-          }
-          if (!isIdleMode && !isExpressionActive) {
-            lookDirection = direction;
-            setEyePosition(direction);
-          }
-        }
+      
+      // Remove all expression classes
+      leftEye.className = 'eye';
+      rightEye.className = 'eye';
+      
+      // Remove active class from all buttons
+      document.querySelectorAll('.control-button').forEach(btn => {
+        btn.classList.remove('active');
       });
-      document.getElementById('eye-box').addEventListener('mousemove', function(e) {
-        if (isIdleMode || isExpressionActive) return;
-        const rect = this.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const x = e.clientX;
-        const y = e.clientY;
-        let direction = 'center';
-        if (x < centerX - 100 && y < centerY - 60) direction = 'up-left';
-        else if (x > centerX + 100 && y < centerY - 60) direction = 'up-right';
-        else if (x < centerX - 100 && y > centerY + 60) direction = 'down-left';
-        else if (x > centerX + 100 && y > centerY + 60) direction = 'down-right';
-        else if (x < centerX - 60) direction = 'left';
-        else if (x > centerX + 60) direction = 'right';
-        else if (y < centerY - 60) direction = 'up';
-        else if (y > centerY + 60) direction = 'down';
-        setEyePosition(direction);
-      });
-      idleMode.addEventListener('change', function() {
-        isIdleMode = this.checked;
-        if (isIdleMode) {
-          setupIdleMovement();
-        } else {
-          clearIdleTimer();
-          setEyePosition('center');
-        }
-      });
-      setupBlinking();
-      setupIdleMovement();
+      
+      // Add active class to clicked button
+      event.target.classList.add('active');
+      
+      currentExpression = expression;
+      
+      // Add the new expression
+      switch(expression) {
+        case 'happy':
+          leftEye.classList.add('happy');
+          rightEye.classList.add('happy');
+          break;
+        case 'sad':
+          leftEye.classList.add('sad');
+          rightEye.classList.add('sad');
+          break;
+        case 'angry':
+          leftEye.classList.add('angry', 'left');
+          rightEye.classList.add('angry');
+          break;
+        case 'dizzy':
+          leftEye.classList.add('dizzy');
+          rightEye.classList.add('dizzy');
+          break;
+        case 'love':
+          leftEye.classList.add('love');
+          rightEye.classList.add('love');
+          break;
+        case 'normal':
+        default:
+          // Normal expression - no additional classes needed
+          break;
+      }
+    }
+    
+    function blink() {
+      if (isBlinking) return;
+      
+      isBlinking = true;
+      const leftEye = document.getElementById('left-eye');
+      const rightEye = document.getElementById('right-eye');
+      
+      leftEye.classList.add('blink');
+      rightEye.classList.add('blink');
+      
+      setTimeout(() => {
+        leftEye.classList.remove('blink');
+        rightEye.classList.remove('blink');
+        isBlinking = false;
+      }, 150);
+    }
+    
+    // Mouse tracking for eye movement
+    document.getElementById('eye-box').addEventListener('mousemove', (e) => {
+      if (currentExpression !== 'normal') return;
+      
+      const eyeBox = e.currentTarget;
+      const rect = eyeBox.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      
+      const deltaX = mouseX - centerX;
+      const deltaY = mouseY - centerY;
+      
+      const maxMove = 20;
+      const moveX = Math.max(-maxMove, Math.min(maxMove, deltaX / 10));
+      const moveY = Math.max(-maxMove, Math.min(maxMove, deltaY / 10));
+      
+      const leftEye = document.getElementById('left-eye');
+      const rightEye = document.getElementById('right-eye');
+      
+      leftEye.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+      rightEye.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+    });
+    
+    // Reset eye position when mouse leaves
+    document.getElementById('eye-box').addEventListener('mouseleave', () => {
+      if (currentExpression !== 'normal') return;
+      
+      const leftEye = document.getElementById('left-eye');
+      const rightEye = document.getElementById('right-eye');
+      
+      leftEye.style.transform = 'translate(-50%, -50%)';
+      rightEye.style.transform = 'translate(-50%, -50%)';
     });
   </script>
 </body>
