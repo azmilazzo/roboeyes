@@ -176,6 +176,50 @@
       75% { transform: translate(-50%, -50%) scale(1.1); }
       100% { transform: translate(-50%, -50%) scale(1); }
     }
+    
+    /* Sleepy expression */
+    .eye.sleepy {
+      background: #6b7280;
+      height: 0.5rem;
+      width: 5.5rem;
+      border-radius: 0.25rem;
+      transform: translate(-50%, -50%) translateY(3rem);
+      animation: sleepy-breathe 2s ease-in-out infinite;
+    }
+    
+    @keyframes sleepy-breathe {
+      0% { transform: translate(-50%, -50%) translateY(3rem) scaleY(1); }
+      50% { transform: translate(-50%, -50%) translateY(3rem) scaleY(0.8); }
+      100% { transform: translate(-50%, -50%) translateY(3rem) scaleY(1); }
+    }
+    
+    /* Sleep symbol animation */
+    .sleep-symbol {
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      font-size: 2.5rem;
+      opacity: 0;
+      animation: sleep-float 3s ease-in-out infinite;
+      z-index: 10;
+      display: none;
+    }
+    
+    @keyframes sleep-float {
+      0% { 
+        opacity: 0.8;
+        transform: translateY(0) scale(1);
+      }
+      50% { 
+        opacity: 1;
+        transform: translateY(-1rem) scale(1.1);
+      }
+      100% { 
+        opacity: 0.8;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
     /* Anger symbol animation */
     .anger-symbol {
       position: absolute;
@@ -238,6 +282,8 @@
         </div>
         <!-- Anger symbol -->
         <div class="anger-symbol" id="anger-symbol">💢</div>
+        <!-- Sleep symbol -->
+        <div class="sleep-symbol" id="sleep-symbol">💤</div>
       </div>
       <!-- Controls -->
       <div class="controls-grid" id="controls">
@@ -263,6 +309,7 @@
         <button data-expr="angry">😠 Angry</button>
         <button data-expr="dizzy">💫 Dizzy</button>
         <button data-expr="love">💖 Love</button>
+        <button data-expr="sleepy">😴 Sleepy</button>
       </div>
     </div>
   </div>
@@ -293,7 +340,9 @@
       const rightEye = document.getElementById('right-eye');
       const idleMode = document.getElementById('idle-mode');
       const angerSymbol = document.getElementById('anger-symbol');
-      if (!leftEye || !rightEye || !idleMode || !angerSymbol) {
+      const sleepSymbol = document.getElementById('sleep-symbol');
+      
+      if (!leftEye || !rightEye || !idleMode || !angerSymbol || !sleepSymbol) {
         console.error('Required DOM elements not found!');
         return;
       }
@@ -318,6 +367,8 @@
         rightEye.className = 'eye';
         angerSymbol.style.opacity = '0';
         angerSymbol.style.display = 'none';
+        sleepSymbol.style.opacity = '0';
+        sleepSymbol.style.display = 'none';
         currentExpression = null;
         isExpressionActive = false;
         setEyePosition('center');
@@ -371,6 +422,11 @@
           rightEye.className = `eye ${expression} right`;
           angerSymbol.style.display = 'block';
           angerSymbol.style.opacity = '1';
+        } else if (expression === 'sleepy') {
+          leftEye.className = 'eye sleepy';
+          rightEye.className = 'eye sleepy';
+          sleepSymbol.style.display = 'block';
+          sleepSymbol.style.opacity = '1';
         } else if (expression === 'dizzy') {
           leftEye.className = 'eye dizzy';
           rightEye.className = 'eye dizzy';
