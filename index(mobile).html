@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robot Eyes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Basic Reset & Body Styling */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(to top right, #a7f3d0, #bfdbfe); /* Soft, playful gradient background */
+      font-family: 'Inter', system-ui, sans-serif; /* Using Inter font */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem; /* Reduced padding for mobile */
+      box-sizing: border-box; /* Include padding in element's total width and height */
+    }
+
+    /* Card Container */
+    .card {
+      max-width: 95vw; /* Max width for mobile, fluid */
+      width: 100%;
+      background: #ffffff; /* White card background */
+      border-radius: 1.5rem; /* More rounded corners */
+      box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2), 0 5px 10px -5px rgba(0, 0, 0, 0.1); /* Softer, more pronounced shadow */
+      overflow: hidden;
+      margin: auto;
+      border: 4px solid #6ee7b7; /* Playful border */
+    }
+
+    /* Card Header */
+    .card-header {
+      text-align: center;
+      padding: 1.5rem 1rem; /* Adjusted padding */
+      background: #34d399; /* Vibrant header background */
+      color: white; /* White text for contrast */
+      border-bottom: 2px solid #10b981; /* Subtle border */
+    }
+
+    /* Card Title */
+    .card-title {
+      font-size: clamp(1.8rem, 5vw, 2.5rem); /* Responsive font size */
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Text shadow for pop */
+    }
+
+    /* Card Content */
+    .card-content {
+      padding: 1.5rem; /* Adjusted padding */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Eye Box Container */
+    .eye-box {
+      width: 90vw; /* Fluid width for mobile */
+      max-width: 24rem; /* Max width to prevent it from getting too big */
+      aspect-ratio: 3 / 2; /* Maintain aspect ratio */
+      background: #2d3748; /* Darker, but still soft black */
+      border-radius: 2.5rem; /* Even more rounded */
+      margin-bottom: 2rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: crosshair;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5); /* Inner shadow for depth */
+      border: 5px solid #4ade80; /* Bright border */
+    }
+
+    /* Eyes Container */
+    .eyes {
+      display: flex;
+      gap: 3.5rem;
+      position: relative;
+    }
+
+    /* Individual Eye Container (for overflow) */
+    .eye-container {
+      width: 6rem;
+      height: 6rem;
+      position: relative;
+      overflow: visible; /* Allows expressions to extend */
+    }
+
+    /* General Eye Style */
+    .eye {
+      width: 5.5rem;
+      height: 5.5rem;
+      background: #60a5fa; /* Brighter blue for eyes */
+      border-radius: 0.75rem; /* Softer square corners */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); /* Eye shadow */
+    }
+
+    /* Happy Expression */
+    .eye.happy {
+      height: 3rem;
+      border-radius: 2.75rem 2.75rem 0 0;
+      animation: happy-bounce 0.3s ease-in-out infinite;
+      background: #fcd34d; /* Yellowish for happy */
+    }
+    @keyframes happy-bounce {
+      0% { transform: translate(-50%, -50%) translateY(-2.5rem); }
+      50% { transform: translate(-50%, -50%) translateY(-2.7rem); }
+      100% { transform: translate(-50%, -50%) translateY(-2.5rem); }
+    }
+    .happy-mouth {
+      position: absolute;
+      width: 6rem;
+      height: 4rem;
+      border: 0.2rem solid transparent;
+      bottom: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      box-sizing: border-box;
+      border-radius: 50%;
+      border-bottom-color: #f97316; /* Orange for happy mouth */
+      opacity: 0;
+      display: none;
+      z-index: 5;
+    }
+    .happy-mouth.active {
+      display: block;
+      animation: happy-mouth-appear 0.5s ease-in-out forwards;
+    }
+    @keyframes happy-mouth-appear {
+      0% { 
+        opacity: 0;
+        width: 2rem;
+        height: 1rem;
+        border-width: 0.1rem;
+        transform: translateX(-50%) scale(0.5);
+      }
+      50% { 
+        opacity: 0.8;
+        width: 4rem;
+        height: 1.5rem;
+        border-width: 0.15rem;
+        transform: translateX(-50%) scale(0.8);
+      }
+      100% { 
+        opacity: 1;
+        width: 6rem;
+        height: 2rem;
+        border-width: 0.2rem;
+        transform: translateX(-50%) scale(1);
+      }
+    }
+
+    /* Sad Expression */
+    .eye.sad {
+      background: #3b82f6; /* Deeper blue for sad */
+      height: 2.75rem;
+      width: 5.5rem;
+      border-radius: 0 0 2.75rem 2.75rem;
+      transform: translate(-50%, -50%);
+      animation: sad-transition 3s ease-in-out forwards;
+    }
+    @keyframes sad-transition {
+      0% { 
+        height: 5.5rem;
+        border-radius: 0.5rem;
+        transform: translate(-50%, -50%);
+      }
+      50% { 
+        height: 2.75rem;
+        border-radius: 0 0 2.75rem 2.75rem;
+        transform: translate(-50%, -50%);
+      }
+      100% { 
+        height: 2.75rem;
+        border-radius: 0 0 2.75rem 2.75rem;
+        transform: translate(-50%, -50%) translateY(4rem);
+      }
+    }
+    .sad-mouth {
+      position: absolute;
+      width: 6rem;
+      height: 6rem;
+      border: 0.2rem solid transparent;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      box-sizing: border-box;
+      border-radius: 50%;
+      border-top-color: #6b7280; /* Darker grey for sad mouth */
+      opacity: 0;
+      display: none;
+      z-index: 5;
+    }
+    .sad-mouth.active {
+      display: block;
+      animation: sad-mouth-appear 3s ease-in-out forwards;
+    }
+    @keyframes sad-mouth-appear {
+      0% { 
+        opacity: 0;
+        width: 2rem;
+        height: 2rem;
+        border-width: 0.1rem;
+        transform: translateX(-50%) translateY(0) scale(0.5);
+        bottom: 20%;
+      }
+      30% { 
+        opacity: 0.7;
+        width: 3rem;
+        height: 3rem;
+        border-width: 0.15rem;
+        transform: translateX(-50%) translateY(2rem) scale(0.8);
+        bottom: 18%;
+      }
+      60% { 
+        opacity: 0.9;
+        width: 4.5rem;
+        height: 4.5rem;
+        border-width: 0.18rem;
+        transform: translateX(-50%) translateY(4rem) scale(0.9);
+        bottom: 16%;
+      }
+      100% { 
+        opacity: 1;
+        width: 6rem;
+        height: 6rem;
+        border-width: 0.2rem;
+        transform: translateX(-50%) translateY(5rem) scale(1);
+        bottom: 14%;
+      }
+    }
+
+    /* Angry Expression */
+    .eye.angry {
+      background: #ef4444; /* Brighter red for angry */
+      height: 5.5rem;
+      width: 6rem;
+      clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
+      transform: translate(-50%, -50%);
+      animation: angry-shake 0.1s ease-in-out infinite;
+    }
+    .eye.angry.left {
+      clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      transform: translate(-50%, -50%) scaleX(-1);
+    }
+    @keyframes angry-shake {
+      0% { transform: translate(-50%, -50%) translateY(3rem); }
+      25% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
+      50% { transform: translate(-50%, -50%) translate(-0.1rem, 3rem); }
+      75% { transform: translate(-50%, -50%) translate(0.1rem, 3rem); }
+      100% { transform: translate(-50%, -50%) translateY(3rem); }
+    }
+    @keyframes pulse {
+      from { opacity: 0.4; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1.2); }
+    }
+    .anger-symbol {
+      position: absolute;
+      top: 20%;
+      right: 20%;
+      font-size: 2.5rem;
+      opacity: 0;
+      display: none;
+      z-index: 10;
+      animation: pulse 0.3s ease-in-out infinite alternate;
+    }
+
+    /* Dizzy Expression */
+    .eye.dizzy {
+      background: transparent;
+    }
+    .eye.dizzy::before {
+      content: '';
+      --b: 8px;
+      --s: 80px;
+      --c: #CD8C52; /* Playful brown/orange */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: var(--s);
+      aspect-ratio: 1;
+      background: 
+        repeating-radial-gradient(calc(2*var(--b)) at top,#0000 -1px,var(--c) 0 calc(50% - 1px),#0000 50% calc(100% - 1px)) calc(50% + var(--b)) 100%, 
+        repeating-radial-gradient(calc(2*var(--b)) at bottom,var(--c) -1px,#0000 0 calc(50% - 1px),var(--c) 50% calc(100% - 1px)) 50% 0;
+      background-size: 150% 50%;
+      background-repeat: no-repeat;
+      mask: 
+        radial-gradient(calc(1.5*var(--b)) at calc(100% - var(--b)/2) 0, #0000 calc(100%/3), #000 calc(100%/3 + 1px) 110%, #0000 0) calc(50% + var(--b)/2) 
+         100%/calc(3*var(--b)) 50% exclude no-repeat, 
+        conic-gradient(#000 0 0);
+      animation: spiral-rotate 1s linear infinite;
+    }
+    @keyframes spiral-rotate {
+      to { transform: translate(-50%, -50%) rotate(-360deg); }
+    }
+
+    /* Love Expression */
+    .eye.love {
+      background: #f472b6; /* Softer pink for love */
+      border-radius: 50%;
+      position: relative;
+      animation: love-pulse 0.8s ease-in-out infinite;
+    }
+    .eye.love::before {
+      content: '♥';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3.5rem;
+      color: white;
+      animation: heart-beat 0.8s ease-in-out infinite;
+    }
+    @keyframes love-pulse {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+    @keyframes heart-beat {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      25% { transform: translate(-50%, -50%) scale(1.2); }
+      50% { transform: translate(-50%, -50%) scale(1); }
+      75% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Sleepy Expression */
+    .eye.sleepy {
+      background: #9ca3af; /* Softer grey for sleepy */
+      height: 0.5rem;
+      width: 5.5rem;
+      border-radius: 0.25rem;
+      transform: translate(-50%, -50%) translateY(3rem);
+      animation: sleepy-breathe 2s ease-in-out infinite;
+    }
+    @keyframes sleepy-breathe {
+      0% { transform: translate(-50%, -50%) translateY(3rem) scaleY(1); }
+      50% { transform: translate(-50%, -50%) translateY(3rem) scaleY(0.8); }
+      100% { transform: translate(-50%, -50%) translateY(3rem) scaleY(1); }
+    }
+    .sleep-symbol {
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      font-size: 2.5rem;
+      opacity: 0;
+      animation: sleep-float 3s ease-in-out infinite;
+      z-index: 10;
+      display: none;
+    }
+    @keyframes sleep-float {
+      0% { 
+        opacity: 0.8;
+        transform: translateY(0) scale(1);
+      }
+      50% { 
+        opacity: 1;
+        transform: translateY(-1rem) scale(1.1);
+      }
+      100% { 
+        opacity: 0.8;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Waking Up Expression */
+    .eye.waking {
+      background: #9ca3af; /* Softer grey */
+      height: 2.5rem;
+      width: 5.5rem;
+      transform: translate(-50%, -50%) translateY(3rem);
+      animation: waking-movement 6s ease-in-out forwards;
+    }
+    @keyframes waking-movement {
+      0% { 
+        height: 0.5rem;
+        transform: translate(-50%, -50%) translateY(3rem);
+      }
+      20% { 
+        height: 2.5rem;
+        transform: translate(-50%, -50%) translateY(3rem);
+      }
+      35% { 
+        height: 2.5rem;
+        transform: translate(-50%, -50%) translateY(3rem) translateX(-2rem);
+      }
+      50% { 
+        height: 2.5rem;
+        transform: translate(-50%, -50%) translateY(3rem) translateX(2rem);
+      }
+      65% { 
+        height: 2.5rem;
+        transform: translate(-50%, -50%) translateY(3rem) translateX(-2rem);
+      }
+      80% { 
+        height: 2.5rem;
+        transform: translate(-50%, -50%) translateY(3rem);
+      }
+      100% { 
+        height: 2.5rem;
+        transform: translate(-50%, -50%) translateY(0);
+      }
+    }
+    .sleep-symbol.popping {
+      animation: sleep-bubble-pop 2s ease-out forwards;
+    }
+    @keyframes sleep-bubble-pop {
+      0% { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      50% { 
+        opacity: 1;
+        transform: translateY(-2rem) scale(1.5);
+      }
+      80% { 
+        opacity: 0.5;
+        transform: translateY(-3rem) scale(2);
+      }
+      100% { 
+        opacity: 0;
+        transform: translateY(-4rem) scale(0);
+        display: none;
+      }
+    }
+
+    /* Crying Expression */
+    .eye.crying {
+      background: #60a5fa; /* Blue for crying eyes */
+      height: 5.5rem;
+      width: 5.5rem;
+      border-radius: 0.5rem;
+      transform: translate(-50%, -50%) translateY(-3rem);
+      animation: crying-tremble 0.5s ease-in-out infinite;
+    }
+    @keyframes crying-tremble {
+      0% { transform: translate(-50%, -50%) translateY(-3rem); }
+      25% { transform: translate(-50%, -50%) translate(0.05rem, -3rem); }
+      50% { transform: translate(-50%, -50%) translate(-0.05rem, -3rem); }
+      75% { transform: translate(-50%, -50%) translate(0.05rem, -3rem); }
+      100% { transform: translate(-50%, -50%) translateY(-3rem); }
+    }
+    .tear {
+      position: absolute;
+      width: 0.5rem;
+      height: 0.8rem;
+      background: #93c5fd; /* Lighter blue for tears */
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0;
+      z-index: 15;
+      animation-play-state: paused;
+    }
+    .tear.active {
+      opacity: 1;
+      animation-play-state: running;
+    }
+    .tear.left {
+      left: 35%;
+      top: 45%;
+    }
+    .tear.right {
+      right: 35%;
+      top: 45%;
+    }
+    .tear.left.active {
+      animation: tear-fall-left 2s ease-in infinite;
+    }
+    .tear.right.active {
+      animation: tear-fall-right 2s ease-in infinite 0.3s;
+    }
+    @keyframes tear-fall-left {
+      0% { transform: translateY(0) scale(0.5); }
+      10% { transform: translateY(0.5rem) scale(1); }
+      90% { transform: translateY(8rem) scale(1); }
+      100% { transform: translateY(9rem) scale(0.8); }
+    }
+    @keyframes tear-fall-right {
+      0% { transform: translateY(0) scale(0.5); }
+      10% { transform: translateY(0.5rem) scale(1); }
+      90% { transform: translateY(8rem) scale(1); }
+      100% { transform: translateY(9rem) scale(0.8); }
+    }
+    .crying-mouth {
+      position: absolute;
+      width: 4rem;
+      height: 4rem;
+      border: 0.2rem solid transparent;
+      bottom: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      box-sizing: border-box;
+      border-radius: 50%;
+      border-top-color: #6b7280; /* Darker grey for crying mouth */
+      opacity: 0;
+      display: none;
+      z-index: 5;
+    }
+    .crying-mouth.active {
+      display: block;
+      animation: crying-mouth-appear 1s ease-in-out forwards;
+    }
+    @keyframes crying-mouth-appear {
+      0% { 
+        opacity: 0;
+        width: 2rem;
+        height: 2rem;
+        transform: translateX(-50%) scale(0.5);
+      }
+      100% { 
+        opacity: 1;
+        width: 4rem;
+        height: 4rem;
+        transform: translateX(-50%) scale(1);
+      }
+    }
+
+    /* Blink Animation */
+    .blink {
+      height: 0.25rem !important;
+      transform: scaleY(0.05) translate(-50%, -50%) !important;
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Controls Grid */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Responsive grid for buttons */
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 32rem;
+      margin-top: 1rem; /* Added margin */
+    }
+
+    /* Control Buttons */
+    .control-button {
+      padding: 0.75rem 0.5rem; /* Adjusted padding for better touch target */
+      background: #d1fae5; /* Light green background */
+      border: 2px solid #34d399; /* Green border */
+      border-radius: 0.75rem; /* More rounded buttons */
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      font-weight: bold;
+      color: #10b981; /* Green text */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Button shadow */
+      touch-action: manipulation; /* Improves touch responsiveness */
+    }
+    .control-button:hover {
+      background: #a7f3d0; /* Lighter green on hover */
+      transform: translateY(-2px); /* Slight lift effect */
+    }
+    .control-button.active {
+      background: #10b981; /* Darker green when active */
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* More prominent shadow when active */
+    }
+    .control-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Checkbox Styling */
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: bold;
+      color: #4b5563;
+      grid-column: span 3; /* Make checkbox span full width of the grid */
+      justify-content: center;
+      padding: 0.5rem;
+    }
+    input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+      accent-color: #34d399; /* Accent color for checkbox */
+    }
+
+    /* Media Queries for smaller screens */
+    @media (max-width: 600px) {
+      .eyes {
+        gap: 2.5rem; /* Reduce gap between eyes on smaller screens */
+      }
+      .eye-container {
+        width: 5rem;
+        height: 5rem;
+      }
+      .eye {
+        width: 4.5rem;
+        height: 4.5rem;
+      }
+      .card-title {
+        font-size: 1.5rem;
+      }
+      .control-button {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.9rem;
+      }
+      .happy-mouth, .sad-mouth, .crying-mouth {
+        width: 4rem; /* Adjust mouth sizes for smaller screens */
+        height: 3rem;
+      }
+      .anger-symbol, .sleep-symbol {
+        font-size: 2rem; /* Adjust symbol sizes */
+      }
+      /* Adjust grid for only expressions and checkbox */
+      .controls-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adjust min width for fewer buttons */
+      }
+      label {
+        grid-column: span 2; /* Adjust checkbox span if the grid changes */
+      }
+    }
+    /* Specific adjustment for when only expression buttons are left */
+    @media (min-width: 601px) {
+      .controls-grid {
+        grid-template-columns: repeat(4, 1fr); /* Adjust for a cleaner layout with fewer buttons */
+      }
+      label {
+        grid-column: span 4; /* Make checkbox span full width of the grid */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Expressive Robot Eyes</div>
+    </div>
+    <div class="card-content">
+      <div class="eye-box" id="eye-box">
+        <div class="eyes">
+          <div class="eye-container">
+            <div class="eye" id="left-eye"></div>
+          </div>
+          <div class="eye-container">
+            <div class="eye" id="right-eye"></div>
+          </div>
+        </div>
+        <div class="anger-symbol" id="anger-symbol">💢</div>
+        <div class="sleep-symbol" id="sleep-symbol">💤</div>
+        <div class="sad-mouth" id="sad-mouth"></div>
+        <div class="happy-mouth" id="happy-mouth"></div>
+        <div class="crying-mouth" id="crying-mouth"></div>
+        <div class="tear left" id="tear-left"></div>
+        <div class="tear right" id="tear-right"></div>
+      </div>
+      <div class="controls-grid" id="controls">
+        <label>
+          <input type="checkbox" id="idle-mode" checked>
+          Idle Mode
+        </label>
+        <button class="control-button" data-expr="happy">😄 Happy</button>
+        <button class="control-button" data-expr="sad">😢 Sad</button>
+        <button class="control-button" data-expr="angry">😠 Angry</button>
+        <button class="control-button" data-expr="dizzy">💫 Dizzy</button>
+        <button class="control-button" data-expr="love">💖 Love</button>
+        <button class="control-button" data-expr="sleepy">😴 Sleepy</button>
+        <button class="control-button" data-expr="waking">😪 Waking Up</button>
+        <button class="control-button" data-expr="crying">ᗒᗣᗕ Crying</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Defines the CSS transform values for different eye gaze directions.
+      // These values are applied to the 'transform' property of the eye elements.
+      const LOOK_DIRECTIONS = {
+        center: 'translate(0, 0)',
+        left: 'translateX(-2rem)',
+        right: 'translateX(2rem)',
+        up: 'translateY(-2rem)',
+        down: 'translateY(2rem)',
+        'up-left': 'translate(-2rem, -2rem)',
+        'up-right': 'translate(2rem, -2rem)',
+        'down-left': 'translate(-2rem, 2rem)',
+        'down-right': 'translate(2rem, 2rem)',
+        'wide-left': 'translateX(-3rem)',
+        'wide-right': 'translateX(3rem)',
+        'wide-up': 'translateY(-3rem)',
+        'wide-down': 'translateY(3rem)'
+      };
+
+      // State variables to manage blinking, eye direction, idle mode, and expressions.
+      let isBlinking = false;
+      let lookDirection = 'center';
+      let isIdleMode = true;
+      let idleTimer = null; // Timer for idle eye movement
+      let isExpressionActive = false; // Flag to indicate if an expression is currently active
+      let currentExpression = null; // Stores the name of the current active expression
+      let expressionTimeout = null; // Timer to reset expression after a duration
+
+      // Get references to DOM elements
+      const leftEye = document.getElementById('left-eye');
+      const rightEye = document.getElementById('right-eye');
+      const idleModeCheckbox = document.getElementById('idle-mode'); // Renamed for clarity
+      const angerSymbol = document.getElementById('anger-symbol');
+      const sleepSymbol = document.getElementById('sleep-symbol');
+      const sadMouth = document.getElementById('sad-mouth');
+      const happyMouth = document.getElementById('happy-mouth');
+      const cryingMouth = document.getElementById('crying-mouth');
+      const tearLeft = document.getElementById('tear-left');
+      const tearRight = document.getElementById('tear-right');
+      // No more allDirectionButtons as they are removed from HTML
+      const allExpressionButtons = document.querySelectorAll('[data-expr]'); // Get all expression buttons
+
+      /**
+       * Clears any active idle movement timer.
+       */
+      function clearIdleTimer() {
+        if (idleTimer) {
+          clearTimeout(idleTimer);
+          idleTimer = null;
+        }
+      }
+
+      /**
+       * Sets the position of both eyes based on a given direction.
+       * @param {string} direction - The key from LOOK_DIRECTIONS (e.g., 'center', 'left').
+       */
+      function setEyePosition(direction) {
+        // If an expression is active, prevent eye movement based on mouse/idle.
+        if (isExpressionActive) return;
+
+        const transform = LOOK_DIRECTIONS[direction] || 'translate(0, 0)';
+        // Combine the base transform (for centering) with the direction-specific transform.
+        const fullTransform = `translate(-50%, -50%) ${transform}`;
+        leftEye.style.transform = fullTransform;
+        rightEye.style.transform = fullTransform;
+
+        // No direction buttons to toggle 'active' class on anymore
+      }
+
+      /**
+       * Resets the eyes to their default state (center gaze, no expression).
+       * Clears any active expression timeouts and removes expression-specific classes/styles.
+       */
+      function resetEyes() {
+        // Clear any pending expression timeout
+        if (expressionTimeout) {
+          clearTimeout(expressionTimeout);
+          expressionTimeout = null;
+        }
+
+        // Reset eye classes to default
+        leftEye.className = 'eye';
+        rightEye.className = 'eye';
+
+        // Hide and reset all expression-related elements
+        angerSymbol.style.opacity = '0';
+        angerSymbol.style.display = 'none';
+        sleepSymbol.style.display = 'none';
+        sleepSymbol.classList.remove('popping'); // Ensure popping class is removed
+
+        sadMouth.style.display = 'none';
+        sadMouth.classList.remove('active');
+        happyMouth.style.display = 'none';
+        happyMouth.classList.remove('active');
+        cryingMouth.style.display = 'none';
+        cryingMouth.classList.remove('active');
+
+        tearLeft.classList.remove('active');
+        tearRight.classList.remove('active');
+
+        // Reset expression state variables
+        currentExpression = null;
+        isExpressionActive = false;
+
+        // Re-enable expression buttons
+        allExpressionButtons.forEach(btn => {
+          btn.disabled = false;
+        });
+        // Remove active state from expression buttons
+        allExpressionButtons.forEach(btn => {
+          btn.classList.remove('active');
+        });
+
+        // Set eyes back to center position
+        setEyePosition('center');
+      }
+
+      /**
+       * Initiates the blinking animation for the eyes.
+       * Blinking occurs at random intervals.
+       */
+      function setupBlinking() {
+        const blink = () => {
+          // Do not blink if already blinking or an expression is active
+          if (isBlinking || isExpressionActive) return;
+
+          isBlinking = true;
+          leftEye.classList.add('blink');
+          rightEye.classList.add('blink');
+
+          // After a short delay, remove the blink class
+          setTimeout(() => {
+            leftEye.classList.remove('blink');
+            rightEye.classList.remove('blink');
+            isBlinking = false;
+          }, 150); // Blink duration
+
+          // Schedule the next blink at a random interval (2 to 4 seconds)
+          setTimeout(blink, Math.random() * 2000 + 2000);
+        };
+        // Initial call to start blinking after a short random delay (1 to 2.5 seconds)
+        setTimeout(blink, Math.random() * 1500 + 1000);
+      }
+
+      /**
+       * Sets up the idle movement for the eyes, where they randomly look around.
+       * This function is called repeatedly if idle mode is enabled.
+       */
+      function setupIdleMovement() {
+        // If idle mode is off or an expression is active, stop idle movement and center eyes.
+        if (!isIdleMode || isExpressionActive) {
+          clearIdleTimer();
+          if (!isExpressionActive) { // Only center if no expression is active
+            setEyePosition('center');
+          }
+          return;
+        }
+
+        const directions = Object.keys(LOOK_DIRECTIONS);
+        const moveEyes = () => {
+          // If an expression becomes active during idle movement, pause and reschedule.
+          if (isExpressionActive) {
+            idleTimer = setTimeout(moveEyes, 500); // Check again after a short delay
+            return;
+          }
+
+          let newDirection;
+          // Select a new random direction, ensuring it's not the same as the current one too often.
+          do {
+            newDirection = directions[Math.floor(Math.random() * directions.length)];
+          } while (newDirection === lookDirection && Math.random() > 0.3); // 30% chance to repeat direction
+
+          lookDirection = newDirection;
+          setEyePosition(newDirection);
+
+          // Schedule the next idle movement at a random interval (1.5 to 3.5 seconds)
+          const nextMove = Math.random() * 2000 + 1500;
+          idleTimer = setTimeout(moveEyes, nextMove);
+        };
+
+        // Initial delay before the first idle movement (1 to 2.5 seconds)
+        const initialDelay = Math.random() * 1500 + 1000;
+        idleTimer = setTimeout(moveEyes, initialDelay);
+      }
+
+      /**
+       * Activates a specific eye expression.
+       * Resets current state, applies expression-specific styles, and sets a timeout to revert.
+       * @param {string} expression - The name of the expression (e.g., 'happy', 'sad').
+       */
+      function setExpression(expression) {
+        resetEyes(); // Always reset eyes before applying a new expression
+        isExpressionActive = true;
+        currentExpression = expression;
+        clearIdleTimer(); // Stop idle movement when an expression is active
+
+        // Apply specific styles and animations based on the expression
+        if (expression === 'angry') {
+          leftEye.className = 'eye angry left';
+          rightEye.className = 'eye angry right';
+          angerSymbol.style.display = 'block';
+          angerSymbol.style.opacity = '1';
+        } else if (expression === 'sad') {
+          leftEye.className = 'eye sad';
+          rightEye.className = 'eye sad';
+          sadMouth.style.display = 'block';
+          sadMouth.classList.add('active');
+        } else if (expression === 'happy') {
+          leftEye.className = 'eye happy';
+          rightEye.className = 'eye happy';
+          happyMouth.style.display = 'block';
+          happyMouth.classList.add('active');
+        } else if (expression === 'sleepy') {
+          leftEye.className = 'eye sleepy';
+          rightEye.className = 'eye sleepy';
+          sleepSymbol.style.display = 'block';
+        } else if (expression === 'waking') {
+          leftEye.className = 'eye waking';
+          rightEye.className = 'eye waking';
+          sleepSymbol.style.display = 'block';
+          sleepSymbol.className = 'sleep-symbol popping'; // Trigger pop animation
+          // Remove popping class after animation to allow reuse
+          setTimeout(() => {
+            sleepSymbol.className = 'sleep-symbol';
+            sleepSymbol.style.display = 'none';
+          }, 2000); // Matches animation duration
+        } else if (expression === 'dizzy') {
+          leftEye.className = 'eye dizzy';
+          rightEye.className = 'eye dizzy';
+        } else if (expression === 'love') {
+          leftEye.className = 'eye love';
+          rightEye.className = 'eye love';
+        } else if (expression === 'crying') {
+          leftEye.className = 'eye crying';
+          rightEye.className = 'eye crying';
+          cryingMouth.style.display = 'block';
+          cryingMouth.classList.add('active');
+          tearLeft.classList.add('active');
+          tearRight.classList.add('active');
+        }
+
+        // Add 'active' class to the clicked expression button
+        allExpressionButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.expr === expression);
+        });
+
+        // Disable all buttons while an expression is active
+        // Since directional buttons are removed, only expression buttons remain to be disabled
+        allExpressionButtons.forEach(btn => {
+          btn.disabled = true;
+        });
+
+        // Set a timeout to reset the expression after 8 seconds
+        expressionTimeout = setTimeout(() => {
+          resetEyes(); // Revert to default state
+          // Re-enable expression buttons
+          allExpressionButtons.forEach(btn => {
+            btn.disabled = false;
+          });
+          // If idle mode is checked, restart idle movement
+          if (idleModeCheckbox.checked) {
+            setupIdleMovement();
+          }
+        }, 8000); // Expression duration
+      }
+
+      // Event listener for control buttons (now only expression buttons)
+      document.getElementById('controls').addEventListener('click', function (e) {
+        const clickedButton = e.target.closest('button'); // Find the closest button
+        if (!clickedButton) return; // If no button was clicked, exit
+
+        // Handle expression buttons
+        const exprBtn = clickedButton.dataset.expr;
+        if (exprBtn) {
+          setExpression(exprBtn);
+          return;
+        }
+        // Directional button logic is now removed as per user request
+      });
+
+      // Event listener for mouse movement over the eye box
+      document.getElementById('eye-box').addEventListener('mousemove', function(e) {
+        // Only track mouse movement if idle mode is off and no expression is active
+        if (isIdleMode || isExpressionActive) return;
+
+        const rect = this.getBoundingClientRect(); // Get the size and position of the eye box
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const x = e.clientX; // Mouse X coordinate
+        const y = e.clientY; // Mouse Y coordinate
+
+        let direction = 'center'; // Default direction
+
+        // Determine eye direction based on mouse position relative to the eye box center
+        // These thresholds define zones for different gaze directions
+        if (x < centerX - 100 && y < centerY - 60) direction = 'up-left';
+        else if (x > centerX + 100 && y < centerY - 60) direction = 'up-right';
+        else if (x < centerX - 100 && y > centerY + 60) direction = 'down-left';
+        else if (x > centerX + 100 && y > centerY + 60) direction = 'down-right';
+        else if (x < centerX - 60) direction = 'left';
+        else if (x > centerX + 60) direction = 'right';
+        else if (y < centerY - 60) direction = 'up';
+        else if (y > centerY + 60) direction = 'down';
+        
+        setEyePosition(direction); // Update eye position
+      });
+
+      // Event listener for touch movement on the eye box (for mobile)
+      document.getElementById('eye-box').addEventListener('touchmove', function(e) {
+        // Prevent default scrolling behavior
+        e.preventDefault(); 
+        if (isIdleMode || isExpressionActive) return;
+
+        // Get the first touch point
+        const touch = e.touches[0];
+        if (!touch) return;
+
+        const rect = this.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const x = touch.clientX;
+        const y = touch.clientY;
+
+        let direction = 'center';
+
+        // Same logic as mousemove for touch
+        if (x < centerX - 100 && y < centerY - 60) direction = 'up-left';
+        else if (x > centerX + 100 && y < centerY - 60) direction = 'up-right';
+        else if (x < centerX - 100 && y > centerY + 60) direction = 'down-left';
+        else if (x > centerX + 100 && y > centerY + 60) direction = 'down-right';
+        else if (x < centerX - 60) direction = 'left';
+        else if (x > centerX + 60) direction = 'right';
+        else if (y < centerY - 60) direction = 'up';
+        else if (y > centerY + 60) direction = 'down';
+        
+        setEyePosition(direction);
+      });
+
+      // Event listener for idle mode checkbox
+      idleModeCheckbox.addEventListener('change', function() {
+        isIdleMode = this.checked; // Update idle mode state
+        if (isIdleMode) {
+          setupIdleMovement(); // Start idle movement if checked
+        } else {
+          clearIdleTimer(); // Stop idle movement if unchecked
+          setEyePosition('center'); // Center eyes when idle mode is off
+        }
+      });
+
+      // Initial setup calls when the DOM is fully loaded
+      setupBlinking(); // Start blinking animation
+      setupIdleMovement(); // Start idle movement if enabled by default
+    });
+  </script>
+</body>
+</html>
+
